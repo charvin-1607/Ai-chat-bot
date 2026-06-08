@@ -894,3 +894,25 @@ Here's a breakdown of what that means and what JS is used for:
 
 1.  **The Language of the Web (Frontend/
 
+
+
+
+// Test Route
+app.get("/", (req, res) => {
+    res.json({
+        message: "AI Chatbot Backend Running..."
+    });
+});
+
+app.get("/ai", async (req, res) => {
+
+    const response = await generateAIResponse(
+        "What is JavaScript?"
+    );
+
+    res.json({
+        response
+    });
+
+});
+

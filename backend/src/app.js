@@ -7,11 +7,10 @@ const rateLimit = require("express-rate-limit");
 const sanitizeInput =require("./middlewares/sanitizeMiddleware");
 
 const authRoutes = require('./routes/authRoutes');
-const chatRoutes = require("./routes/chatRoutes");
 const conversationRoutes = require("./routes/conversationRoutes");
 const messageRoutes = require("./routes/messageRoutes");
 
-const generateAIResponse = require("./services/aiService");
+
 
 const app = express();
 
@@ -67,28 +66,9 @@ app.use(cookieParser());
 //Routes
 
 app.use('/api/auth',authRoutes);
-app.use("/api/chat", chatRoutes);
 app.use("/api/conversation",conversationRoutes);
 app.use("/api/message", messageRoutes);
 
-// Test Route
-app.get("/", (req, res) => {
-    res.json({
-        message: "AI Chatbot Backend Running..."
-    });
-});
-
-app.get("/ai", async (req, res) => {
-
-    const response = await generateAIResponse(
-        "What is JavaScript?"
-    );
-
-    res.json({
-        response
-    });
-
-});
 
 
 module.exports = app;

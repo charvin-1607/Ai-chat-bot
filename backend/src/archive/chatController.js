@@ -1,4 +1,4 @@
-const Chat = require("../models/Chat");
+const Chat = require("./Chat");
 
 const generateAIResponse = require("../services/aiService");
 
