@@ -1,9 +1,12 @@
+import { CONVERSATION_ROUTE } from "../config/api";
+
+
 export const createConversationAPI = async () => {
 
   try {
 
     const response = await fetch(
-      "http://localhost:5000/api/conversation",
+      `${CONVERSATION_ROUTE}/`,
       {
         method: "POST",
         credentials: "include"
@@ -30,7 +33,7 @@ export const getConversationsAPI = async () => {
   try {
 
     const response = await fetch(
-      "http://localhost:5000/api/conversation",
+      `${CONVERSATION_ROUTE}/`,
       {
         method: "GET",
         credentials: "include"
@@ -58,7 +61,7 @@ export const renameConversationAPI = async (conversationId,title) => {
   try {
 
     const response = await fetch(
-      `http://localhost:5000/api/conversation/${conversationId}`,
+      `${CONVERSATION_ROUTE}/${conversationId}`,
       {
         method: "PATCH",
         headers: {
@@ -95,7 +98,7 @@ export const deleteConversationAPI = async (
   try {
 
     const response = await fetch(
-      `http://localhost:5000/api/conversation/${conversationId}`,
+      `${CONVERSATION_ROUTE}/${conversationId}`,
       {
         method: "DELETE",
 

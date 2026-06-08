@@ -11,7 +11,7 @@ dotenv.config();
 const PORT = process.env.PORT || 5000;
 
 
-console.log(process.env.GEMINI_API_KEY);
+ console.log(process.env.GEMINI_API_KEY);
 
 
 // MongoDB Connection

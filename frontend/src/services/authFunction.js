@@ -1,9 +1,12 @@
 const BASE_URL = "http://localhost:5000/api/auth";
 
+import { AUTH_ROUTE } from "../config/api";
+
+
 //  Signup API
 export const signupAPI = async (formData) => {
   try {
-    const res = await fetch(`${BASE_URL}/signup`, {
+    const res = await fetch(`${AUTH_ROUTE}/signup`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -31,7 +34,7 @@ export const loginAPI = async (email,password) => {
 
   try {
     
-    const res = await fetch(`${BASE_URL}/login`, {
+    const res = await fetch(`${AUTH_ROUTE}/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -59,7 +62,7 @@ export const getMeAPI = async () => {
   try {
 
     const response = await fetch(
-      `${BASE_URL}/me`,
+      `${AUTH_ROUTE}/me`,
       {
         method: "GET",
         credentials: "include"

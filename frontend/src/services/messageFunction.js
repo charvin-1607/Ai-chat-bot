@@ -1,3 +1,6 @@
+import { MESSAGE_ROUTE } from "../config/api";
+
+
 export const getMessagesAPI = async (
   conversationId
 ) => {
@@ -5,7 +8,7 @@ export const getMessagesAPI = async (
   try {
 
     const response = await fetch(
-      `http://localhost:5000/api/message/${conversationId}`,
+      `${MESSAGE_ROUTE}/${conversationId}`,
       {
         method: "GET",
         credentials: "include"
@@ -36,7 +39,7 @@ export const getMessagesAPI = async (
 //   try {
 
 //     const response = await fetch(
-//       "http://localhost:5000/api/message/",
+//      `${MESSAGE_ROUTE}/`,
 //       {
 //         method: "POST",
 //         headers: {
@@ -82,7 +85,7 @@ export const sendMessageAPI=async(
   try{
   
   const response= await fetch(
-  "http://localhost:5000/api/message",
+  `${MESSAGE_ROUTE}/`,
   
   {
   

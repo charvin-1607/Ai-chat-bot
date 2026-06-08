@@ -3,7 +3,7 @@ node_modules
 
 #  Deprecated 
 
-src/archive
+# src/archive
 
 #  Initial implementation of AI chat.
 
@@ -11,6 +11,3 @@ src/archive
 
 #  for better scalability and message management.
 
-src/archive/Chat.js
-src/archive/chatController.js
-src/archive/chatRoutes.js
