@@ -1,6 +1,16 @@
 node_modules
 .env
 
+#  Deprecated 
+
+src/archive
+
+#  Initial implementation of AI chat.
+
+#  Replaced by Conversation + Message architecture
+
+#  for better scalability and message management.
+
 src/archive/Chat.js
 src/archive/chatController.js
 src/archive/chatRoutes.js
