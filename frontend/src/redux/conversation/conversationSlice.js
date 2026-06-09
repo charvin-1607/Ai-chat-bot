@@ -91,6 +91,8 @@ const conversationSlice = createSlice({
       state.getConversationsRequest.success = true;
       state.conversations = action.payload.conversations;
 
+      console.log("Conversations fetched successfully:", state.conversations);
+
     },
 
 
