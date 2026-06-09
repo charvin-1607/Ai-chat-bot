@@ -73,6 +73,13 @@ app.use("/api/conversation",conversationRoutes);
 app.use("/api/message", messageRoutes);
 
 
+//test route
+app.get("/api/test", (req, res) => {
+    res.json({
+        success: true,
+        message: "API is working"
+    });
+});
 
 
 module.exports = app;
