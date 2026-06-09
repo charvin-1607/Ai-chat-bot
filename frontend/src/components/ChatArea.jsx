@@ -25,10 +25,10 @@ function ChatArea() {
     (state) => state.message
   );
 
-  console.log(
-    "CHAT RENDER",
-    messages
-  );
+  // console.log(
+  //   "CHAT RENDER",
+  //   messages
+  // );
 
   const { selectedConversation } = useSelector(
     (state) => state.conversation

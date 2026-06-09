@@ -118,7 +118,7 @@ const authSlice = createSlice({
       state.fetchMeRequest.success = true;
       state.user = action.payload.user;
 
-      console.log("fetch me success, user insidde authSlice= ", state.user);
+      // console.log("fetch me success, user insidde authSlice= ", state.user);
 
       state.message = action.payload?.message || "User data fetched successfully";
       state.authChecked = true;

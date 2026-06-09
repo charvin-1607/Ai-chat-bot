@@ -14,12 +14,13 @@ export const signupAPI = async (formData) => {
     });
   
       const data = await res.json();
-      console.log("in signup function = ",data);
+     // console.log("in signup function = ",data);
   
       return data;
   
   } catch (error) {
-    console.error("Signup API error:", error);
+    //console.error("Signup API error:", error);
+    alert(error.message || "Something went wrong during signup");
     throw new Error(error.message || "Something went wrong during signup");
     
   }
@@ -43,12 +44,13 @@ export const loginAPI = async (email,password) => {
     });
 
     const data = await res.json();
-    console.log("in login function = ",data);
+    // console.log("in login function = ",data);
   
     return data;
 
   } catch (error) {
-    console.error("Login API error:", error);
+    // console.error("Login API error:", error);
+    alert(error.message || "Something went wrong during login");
     throw new Error(error.message || "Something went wrong during login");
     
   }

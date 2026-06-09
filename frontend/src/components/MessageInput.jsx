@@ -50,7 +50,7 @@ function MessageInput() {
         dispatch(addTemporaryMessage(tempMessage));
 
         controllerRef.current = new AbortController();
-        console.log("Controller Created: ", controllerRef.current);
+        // console.log("Controller Created: ", controllerRef.current);
 
         dispatch(sendMessageRequestStart());
 
@@ -61,29 +61,28 @@ function MessageInput() {
         setContent("");
 
         try {
-
+            
             const res = await sendMessageAPI(
-
+                
                 selectedConversation._id,
                 currentMessage,
-
-                (chunk) => {
-
-                    console.log(
-                        "CHUNK RECEIVED = ",
-                        chunk
-                        );
-                        
-                    dispatch(updateStreamingMessage(chunk));
-
-                },
-
-                controllerRef.current.signal
-
                 
-            );
-
-            console.log("controller after response: ", controllerRef.current.signal);
+                (chunk) => {
+                    
+                    // console.log(
+                    //     "CHUNK RECEIVED = ",
+                    //     chunk
+                    //     );
+                        
+                        dispatch(updateStreamingMessage(chunk));
+                        
+                    },
+                    
+                    controllerRef.current.signal
+                    
+                );
+                
+                // console.log("controller after response: ", controllerRef.current.signal);
             
             if (!res || res.error) {
 
@@ -117,7 +116,7 @@ function MessageInput() {
             
             // console log to verify that the abort signal is sent
 
-            console.log("Abort signal sent inside  handleStopGeneration : ", controllerRef.current);
+            // console.log("Abort signal sent inside  handleStopGeneration : ", controllerRef.current);
         }
 
     };

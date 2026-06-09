@@ -1,0 +1,918 @@
+aa maro authcontroller no code 
+// LOGIN
+exports.login = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({ message: "Email and password are required" });
+    }
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(400).json({ message: "Invalid email or password" });
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: "Invalid email or password" });
+    }
+
+    const token = jwt.sign({ id: user._id, email: user.email }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN });
+    console.log("Generated Token:", token); // Debugging log
+
+    // Set token in HTTP-only cookie
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: false,
+      // sameSite: "strict",
+      maxAge: 3600000
+    });
+
+   
+
+    res.json({
+      success: true,
+      message: "Login successful",
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
+    });
+
+
+  
+
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+
+
+const User = require("../models/User");
+const jwt = require("jsonwebtoken");
+
+async function authMiddleware(req, res, next){
+
+    console.log("check before token declaration"); // Debugging log
+
+    const token =  req.cookies.token;
+    console.log("Token from cookies:", token); // Debugging log
+
+  if (!token) {
+    return res.status(401).json({success:false, message: "No token, authorization denied" });
+  }
+
+  try {
+    const decoded =  jwt.verify(token, process.env.JWT_SECRET);
+    //req.user = decoded.user;
+
+    //find user by decoded id and attach to req.user
+
+    const user = await User.findById(decoded.id).select("-password");
+    
+    if (!user) {
+      return res.status(401).json({ success:false,message: "User not found" });
+    }
+
+    req.user = {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+    }
+
+   return next();
+  } catch (err) {
+    res.status(401).json({success:false,message: "Token is not valid" });
+  }
+}
+
+module.exports = authMiddleware;
+
+i get error = 
+
+Cannot read properties of undefined (reading 'token')
+
+solved it
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+     if (!conversation) {
+            return res.status(404).json({
+                success: false,
+                message: "Conversation not found"
+            });
+        }
+
+        if (
+            conversation.user.toString() !==
+            req.user._id.toString()
+        ) {
+            return res.status(401).json({
+                success: false,
+                message: "Unauthorized"
+            });
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+src
+│
+├── app
+│   └── store.js
+│
+├── features
+│   ├── auth
+│   │   └── authSlice.js
+│   │
+│   ├── conversation
+│   │   └── conversationSlice.js
+│   │
+│   └── message
+│       └── messageSlice.js
+│
+├── components
+│   ├── Sidebar.jsx
+│   ├── ChatBox.jsx
+│   ├── MessageBubble.jsx
+│   └── Navbar.jsx
+│
+├── pages
+│   ├── Login.jsx
+│   ├── Signup.jsx
+│   └── Chat.jsx
+│
+├── routes
+│   └── ProtectedRoute.jsx
+│
+├── App.jsx
+├── main.jsx
+└── index.css
+
+
+
+
+
+import { createSlice } from "@reduxjs/toolkit";
+
+const authSlice = createSlice({
+  name: "auth",
+  
+  initialState: {
+    data: [],
+    employee: null,
+    authToken: "",
+    authChecked: false,
+
+    signupRequest: { 
+      loading: false,
+      success: false,
+      error: null,
+      message: "",
+    },
+    loginRequest: { 
+     loading: false,
+     success: false,
+     error: null,
+     message: "",
+    },
+
+    logoutRequest:{
+      loading: false,
+     success: false,
+     error: null,
+     message: "",
+
+    },
+
+    
+     //get me [ employees fetch therir own details when they login and view their dashboard]
+     fetchMyDetailsRequest: {
+      loading: false,
+      success: false,
+      error: null,
+      message: "",
+     },
+
+  
+  
+  },
+
+  reducers: {
+    // SIGNUP
+    signupRequestStart: (state) => {
+      state.signupRequest.loading = true;
+      state.signupRequest.success = false;
+      state.signupRequest.error = null;
+      state.signupRequest.message = "";
+    },
+    signupRequestSuccess: (state, action) => {
+      state.signupRequest.loading = false;
+      state.signupRequest.success = true;
+      state.signupRequest.message = action.payload?.message || "Signup successful";
+      console.log("in user slice inside singup  = ", action.payload);
+      
+    },
+    signupRequestFail: (state, action) => {
+      state.signupRequest.loading = false;
+      state.signupRequest.error = action.payload || "Signup failed";
+      console.log("in userslice = ",state.signupRequest.error);
+    },
+
+
+    // LOGIN
+    loginRequestStart: (state) => {
+      state.loginRequest.loading = true;
+      state.loginRequest.success = false;
+      state.loginRequest.error = null;
+      state.loginRequest.message = "";
+    },
+    loginRequestSuccess: (state, action) => {
+      state.loginRequest.loading = false;
+      state.loginRequest.success = true;
+      state.loginRequest.message = action.payload?.message || "Login successful";
+      state.employee = action.payload?.user || null;
+
+     console.log("in userslice action.payload = ", action.payload);
+     console.log("in userslice state.employee = ", state.employee);
+
+     state.authToken = action.payload.token;
+     state.authChecked = true;  
+    },
+    
+    loginRequestFail: (state, action) => {
+      state.loginRequest.loading = false;
+      state.loginRequest.error = action.payload || "Login failed";
+      console.log("in userslice = ",state.loginRequest.error);
+  },
+
+
+  // logout 
+
+ 
+  logoutRequestStart: (state) => {
+    state.logoutRequest.loading = true;
+    state.logoutRequest.success = false;
+    state.logoutRequest.error = null;
+    state.logoutRequest.message = "";
+  },
+ 
+  logoutRequestSuccess: (state, action) => {
+    state.logoutRequest.loading = false;
+    state.logoutRequest.success = true;
+    state.logoutRequest.message = action.payload?.message || "Login successful";
+    state.employee = null;
+   state.authToken = "";
+   state.authChecked = false;  
+  },
+
+  logutRequestFail: (state, action) => {
+    state.logoutRequest.loading = false;
+    state.logoutRequest.error = action.payload || "Login failed";
+    console.log("in userslice = ",state.loginRequest.error);
+ },
+
+
+
+
+
+  
+    // employee get their own details when they login and view their dashboard
+    fetchMyDetailsStart: (state) => {
+      state.fetchMyDetailsRequest.loading = true;
+      state.fetchMyDetailsRequest.success = false;
+      state.fetchMyDetailsRequest.error = null;
+    },
+
+    fetchMyDetailsSuccess: (state, action) => {
+      state.fetchMyDetailsRequest.loading = false;
+      state.fetchMyDetailsRequest.success = true;
+      state.employee = action.payload.employee;
+
+      console.log("inside employeeSlice, action.payload = ", action.payload);
+      console.log("inside employeeSlice Fetched employee details: ", action.payload.employee);
+
+      state.fetchMyDetailsRequest.message = action.payload.message;
+
+      state.authChecked = true; // set authChecked to true after we have fetched employee details, so that we can show the appropriate UI (login page or dashboard) without any flickering
+    },
+
+    fetchMyDetailsFail: (state, action) => {
+      state.fetchMyDetailsRequest.loading = false;
+      state.fetchMyDetailsRequest.error = action.payload;
+    },
+
+
+},
+  
+});
+
+export const {
+
+  signupRequestStart,
+  signupRequestSuccess,
+  signupRequestFail,
+
+  loginRequestStart,
+  loginRequestSuccess,
+  loginRequestFail,
+
+  logoutRequestStart,
+  logoutRequestSuccess,
+  logutRequestFail,
+
+  fetchMyDetailsStart,
+  fetchMyDetailsSuccess,
+  fetchMyDetailsFail,
+ 
+
+} = authSlice.actions;
+
+export default authSlice.reducer;
+
+
+singup.jsx = 
+
+import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  signupRequestStart,
+  signupRequestSuccess,
+  signupRequestFail,
+} from "../../redux/auth/authSlice";
+
+import { signupAPI } from "../../services/authFunctions";
+import { Link, useNavigate } from "react-router-dom";
+
+
+
+function Signup() {
+  
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+
+  const { signupRequest } = useSelector((state) => state.auth);
+
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+  });
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    dispatch(signupRequestStart());
+
+    try {
+        const res = await signupAPI(formData);
+
+        if (!res || res.error) {
+            dispatch(signupRequestFail(res.message || "Signup failed"));
+            alert("error message = " + (res.message || "Signup failed"));
+            return;
+          }
+    
+          dispatch(signupRequestSuccess(res));
+          alert(res.message || "Signup successful");
+          console.log("in signup component response.message = " , res.message);
+          console.log("in signup component full response  = " , res);
+
+          setFormData({name: "", email: "", password: ""});
+
+            // Navigate to login page after successful signup
+            navigate("/login");
+        
+    } catch (error) {
+        const errorMessage = error.message || "Something went wrong during signup";
+        dispatch(signupRequestFail(errorMessage));
+        alert(errorMessage);   
+    }
+
+}  
+
+  return (
+    <>
+    
+
+    <div className="container d-flex justify-content-center align-items-center vh-100">
+      
+      <div className="card p-4 shadow" style={{ width: "400px" }}>
+        
+        <h2 className="text-center mb-4">Signup</h2>
+
+        <form onSubmit={handleSubmit}>
+
+          {/* Name */}
+          <div className="mb-3">
+            <input
+              type="text"
+              name="name"
+              className="form-control"
+              placeholder="Enter name"
+              value={formData.name}
+              onChange={handleChange}
+            />
+          </div>
+
+          {/* Email */}
+          <div className="mb-3">
+            <input
+              type="email"
+              name="email"
+              className="form-control"
+              placeholder="Enter email"
+              value={formData.email}
+              onChange={handleChange}
+            />
+          </div>
+
+          {/* Password */}
+          <div className="mb-3">
+            <input
+              type="password"
+              name="password"
+              className="form-control"
+              placeholder="Enter password"
+              value={formData.password}
+              onChange={handleChange}
+            />
+          </div>
+
+          {/* Button */}
+          <button
+            type="submit"
+            className="btn btn-primary w-100"
+            disabled={signupRequest.loading}
+          >
+            {signupRequest.loading ? "Signing up..." : "Signup"}
+          </button>
+
+        </form>
+
+        {/* Messages */}
+        {signupRequest.success && (
+          <div className="alert alert-success mt-3">
+            {signupRequest.message}
+          </div>
+        )}
+
+        {signupRequest.error && (
+          <div className="alert alert-danger mt-3">
+            {signupRequest.error}
+          </div>
+        )}
+    
+    <br />
+    <span> if you have an account so please login </span>
+    <Link to='/login'> login </Link>
+
+      </div>
+       
+    </div>
+
+    <div>
+     
+    </div>
+      
+    </>
+  );
+}
+
+export default Signup;
+
+
+aa old task-managment -project no code chhe so this is for only remember to you
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+return (
+
+    <div className="w-300px bg-zinc-900 border-r border-zinc-800 flex flex-col">
+
+      {/* Top */}
+      <div className="p-4 border-b border-zinc-800">
+
+        <button
+          onClick={handleCreateConversation}
+          className="w-full bg-white text-black p-3 rounded-lg font-semibold cursor-pointer"
+        >
+
+          {
+            createConversationRequest.loading
+              ? "Creating..."
+              : "+ New Chat"
+          }
+
+        </button>
+
+      </div>
+
+
+      {/* Conversations */}
+      <div className="flex-1 overflow-y-auto p-3 space-y-2">
+
+        {
+          conversations.map((conversation) => (
+
+            <div
+              key={conversation._id}
+              className="group relative bg-zinc-800 hover:bg-zinc-700 p-3 rounded-lg text-white cursor-pointer flex items-center justify-between"
+            >
+
+              <p className="truncate">
+                {conversation.title}
+              </p>
+
+
+              <div className="relative">
+
+                <button
+                  onClick={() =>
+                    setOpenMenuId(
+
+                      openMenuId ===
+                        conversation._id
+
+                        ? null
+
+                        : conversation._id
+                    )
+                  }
+                  className="hidden group-hover:block px-2"
+                >
+
+                  ⋮
+
+                </button>
+
+
+                {
+                  openMenuId ===
+                  conversation._id && (
+
+                    <div className="absolute right-0 mt-2 w-32 bg-zinc-900 border border-zinc-700 rounded-lg overflow-hidden z-50">
+
+                      <button
+                        onClick={() =>
+                          handleRenameConversation(
+                            conversation._id
+                          )
+                        }
+                        className="w-full text-left px-4 py-2 hover:bg-zinc-800"
+                      >
+
+                        Rename
+
+                      </button>
+
+
+                      <button
+                        onClick={() =>
+                          handleDeleteConversation(
+                            conversation._id
+                          )
+                        }
+                        className="w-full text-left px-4 py-2 hover:bg-zinc-800 text-red-500"
+                      >
+
+                        Delete
+
+                      </button>
+
+                    </div>
+
+                  )
+                }
+
+              </div>
+
+            </div>
+
+          ))
+        }
+
+      </div>
+
+    </div>
+
+  );
+
+
+
+
+aa ma aa below no code kya lakhvano chhe 
+
+<div
+key={conversation._id}
+onClick={()=>
+handleSelectConversation(
+conversation
+)
+}
+className={`group relative p-3 rounded-lg text-white cursor-pointer flex items-center justify-between
+
+${
+selectedConversation?._id===
+conversation._id
+
+? "bg-zinc-700"
+
+: "bg-zinc-800 hover:bg-zinc-700"
+}
+`}
+>
+
+????
+
+
+
+
+
+
+
+const generateAIResponseStream = async (message) => {
+
+    try {
+
+        const result = await model.generateContentStream(message);
+
+        return result.stream;
+
+    } catch (error) {
+
+        console.log("Gemini Error:", error.message);
+
+        return "Something went wrong";
+
+    }
+
+};
+
+// SEND MESSAGE CONTROLLER 
+const sendMessage = async (req, res) => {
+    try {
+
+        const { conversationId, message } = req.body;
+
+        if (!message) {
+            return res.status(400).json({
+                success: false,
+                message: "Message is required"
+            });
+        }
+
+        const conversation = await Conversation.findById(
+            conversationId
+        );
+
+        if (!conversation) {
+            return res.status(404).json({
+                success: false,
+                message: "Conversation not found"
+            });
+        }
+
+        if (
+            conversation.user.toString() !==
+            req.user.id.toString()
+        ) {
+            return res.status(401).json({
+                success: false,
+                message: "Unauthorized"
+            });
+        }
+
+
+        // Save User Message
+        await Message.create({
+            conversation: conversationId,
+            role: "user",
+            content: message
+        });
+
+
+        // Streaming Headers
+        res.setHeader(
+            "Content-Type",
+            "text/plain; charset=utf-8"
+        );
+
+        res.setHeader(
+            "Transfer-Encoding",
+            "chunked"
+        );
+
+        // AI Response
+        // const aiResponse = await generateAIResponse(message);
+
+        let fullResponse = "";
+
+
+        // Gemini Stream
+        const stream = await generateAIResponseStream(message);
+
+
+        console.log("Stream Started");
+
+        for await (
+            const chunk of stream
+        ) {
+
+            const text =
+                chunk.text();
+
+            fullResponse += text;
+
+            res.write(text);
+
+        }
+
+        console.log("Stream Ended");
+
+        // Save AI Message
+        const aiMessage = await Message.create({
+            conversation: conversationId,
+            role: "assistant",
+            content: fullResponse
+        });
+
+
+        // Update Conversation Time
+        conversation.updatedAt = Date.now();
+
+        await conversation.save();
+
+
+        // End Stream
+        res.end();
+
+
+        // res.status(200).json({
+        //     success: true,
+        //     userMessage: message,
+        //     aiMessage
+        // });
+
+    } catch (error) {
+
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+
+    }
+};
+
+
+
+backend console.log() = debugge = 
+
+Stream Started
+BACKEND CHUNK = **JS** is an abbreviation for **JavaScript**.
+
+At its core, JavaScript
+BACKEND CHUNK =  is a **high-level, interpreted programming language** primarily used to make web pages interactive.      
+
+Here's a breakdown of what that means and what JS is used for:
+
+1.  **The Language of the Web (Frontend/
+BACKEND CHUNK = Client-Side):**
+    *   Originally, JavaScript was created to run directly in web browsers (client-side).
+    *   It allows developers to add dynamic behavior and interactivity to websites, which HTML provides the structure and CSS
+BACKEND CHUNK =  provides the styling.
+    *   **Examples of what JS does in a browser:**
+        *   Animating elements on a page (e.g., carousels, pop-ups).
+        *   Validating form input
+BACKEND CHUNK =  before submission.
+        *   Responding to user clicks, hovers, and keypresses.
+        *   Fetching new data from a server without reloading the entire page (e.g., infinite scrolling, live search results).
+        *
+BACKEND CHUNK =    Interactive maps, games, and complex user interfaces.
+
+2.  **Beyond the Browser (Backend/Server-Side & More):**
+    *   With the introduction of **Node.js** in 2009, JavaScript
+BACKEND CHUNK = 's capabilities expanded dramatically. Node.js is a runtime environment that allows you to run JavaScript code *outside* of a web browser, typically on a server.
+    *   **Examples of what JS (with Node.js) does outside
+BACKEND CHUNK =  the browser:**
+        *   Building server-side applications and APIs (the "backend" of websites and mobile apps).
+        *   Creating command-line tools.
+        *   Developing desktop applications (using frameworks like Electron,
+BACKEND CHUNK =  which powers VS Code, Slack, etc.).
+        *   Developing mobile applications (using frameworks like React Native or NativeScript).
+        *   IoT (Internet of Things) devices.
+
+**Key Characteristics of JavaScript:**
+
+*   **High-
+BACKEND CHUNK = level:** It abstracts away complex computer details, making it easier to write.
+*   **Interpreted & Just-in-Time Compiled:** It's executed line by line by an interpreter, though modern JavaScript engines use Just-in-Time
+BACKEND CHUNK =  (JIT) compilation for significant performance improvements.
+*   **Multi-paradigm:** It supports various programming styles, including object-oriented, functional, and imperative.    
+*   **Dynamic/Loosely Typed:** You don't have
+BACKEND CHUNK =  to declare the data type of a variable (e.g., `string`, `number`) when you create it; its type is determined at runtime.
+*   **Single-threaded (mostly) with Asynchronous Capabilities:** It typically processes
+BACKEND CHUNK =  one task at a time, but uses asynchronous patterns (like callbacks, Promises, and `async/await`) to handle long-running operations without blocking the main thread, especially important for responsive user interfaces.
+*   **Ubiquitous:** It
+BACKEND CHUNK =  runs virtually everywhere – every web browser has a JavaScript engine, and Node.js makes it runnable on servers and other environments.
+
+**In essence, if HTML is the structure and CSS is the style, JavaScript is the *behavior* and *
+BACKEND CHUNK = interactivity* that brings a web page to life, and much more.**
+Stream Ended
+
+
+
+frontend debuge :- stop kyru etle aatlo j response aayvo
+
+CHUNK RECEIVED =  **JS** is an abbreviation for **JavaScript**.
+
+At its core, JavaScript is a **high-level, interpreted programming language** primarily used to make web pages interactive.
+
+Here's a breakdown of what that means and what JS is used for:
+
+1.  **The Language of the Web (Frontend/
+
+
+
+
+// Test Route
+app.get("/", (req, res) => {
+    res.json({
+        message: "AI Chatbot Backend Running..."
+    });
+});
+
+app.get("/ai", async (req, res) => {
+
+    const response = await generateAIResponse(
+        "What is JavaScript?"
+    );
+
+    res.json({
+        response
+    });
+
+});
+
