@@ -19,7 +19,7 @@ exports.signup = async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    console.log("Hashed Password:", hashedPassword); // Debugging log
+    // console.log("Hashed Password:", hashedPassword); // Debugging log
 
 
     const user = await User.create({
@@ -62,7 +62,7 @@ exports.login = async (req, res) => {
     }
 
     const token = jwt.sign({ id: user._id, email: user.email }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN });
-    console.log("Generated Token:", token); // Debugging log
+    // console.log("Generated Token:", token); // Debugging log
 
     // Set token in HTTP-only cookie
     res.cookie("token", token, {

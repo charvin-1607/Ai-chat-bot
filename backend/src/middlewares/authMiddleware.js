@@ -6,7 +6,7 @@ async function authMiddleware(req, res, next){
     console.log("check before token declaration"); // Debugging log
 
     const token =  req.cookies.token;
-    console.log("Token from cookies:", token); // Debugging log
+    // console.log("Token from cookies:", token); // Debugging log
 
   if (!token) {
     return res.status(401).json({success:false, message: "No token, authorization denied" });
