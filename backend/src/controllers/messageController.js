@@ -6,137 +6,7 @@ const generateAIResponseStream = require("../services/aiService");
 
 
 // SEND MESSAGE
-// const sendMessage = async (req, res) => {
-//     try {
 
-//         const { conversationId, message } = req.body;
-
-//         if (!message) {
-//             return res.status(400).json({
-//                 success: false,
-//                 message: "Message is required"
-//             });
-//         }
-
-//         const conversation = await Conversation.findById(
-//             conversationId
-//         );
-
-//         if (!conversation) {
-//             return res.status(404).json({
-//                 success: false,
-//                 message: "Conversation not found"
-//             });
-//         }
-
-//         if (
-//             conversation.user.toString() !==
-//             req.user.id.toString()
-//         ) {
-//             return res.status(401).json({
-//                 success: false,
-//                 message: "Unauthorized"
-//             });
-//         }
-
-
-//         // Save User Message
-//         await Message.create({
-//             conversation: conversationId,
-//             role: "user",
-//             content: message
-//         });
-
-
-//         // Streaming Headers
-//         res.setHeader(
-//             "Content-Type",
-//             "text/plain; charset=utf-8"
-//         );
-
-//         res.setHeader(
-//             "Transfer-Encoding",
-//             "chunked"
-//         );
-
-//         // AI Response
-//         // const aiResponse = await generateAIResponse(message);
-
-//         let isAborted = false;
-
-//         res.on("close", () => {
-
-//             console.log("Client Disconnected");
-
-//             isAborted = true;
-
-//         });
-
-//         let fullResponse = "";
-
-
-//         // Gemini Stream
-//         const stream = await generateAIResponseStream(message);
-
-
-//         console.log("Stream Started");
-
-//         for await (
-//             const chunk of stream
-//         ) {
-
-//             if (isAborted) {
-
-//                 console.log("Generation Stopped");
-
-//                 break;
-
-//             }
-
-//             const text = chunk.text();
-//             console.log("Chunk Received:", text);
-
-//             fullResponse += text;
-
-//             res.write(text);
-
-//         }
-
-//         console.log("Stream Ended");
-
-//         // Save AI Message
-//         const aiMessage = await Message.create({
-//             conversation: conversationId,
-//             role: "assistant",
-//             content: fullResponse
-//         });
-
-
-//         // Update Conversation Time
-//         conversation.updatedAt = Date.now();
-
-//         await conversation.save();
-
-
-//         // End Stream
-//         res.end();
-
-
-//         // res.status(200).json({
-//         //     success: true,
-//         //     userMessage: message,
-//         //     aiMessage
-//         // });
-
-//     } catch (error) {
-
-//         res.status(500).json({
-//             success: false,
-//             message: error.message
-//         });
-
-//     }
-// };
 
 // SEND MESSAGE
 const sendMessage = async (req, res) => {
@@ -202,8 +72,33 @@ const sendMessage = async (req, res) => {
 
         let fullResponse = "";
 
-        const stream =
-            await generateAIResponseStream(message);
+        // const stream =
+        //     await generateAIResponseStream(message);
+
+        let stream;
+
+        try {
+
+            stream =
+                await generateAIResponseStream(message);
+
+        } catch (error) {
+
+            console.log(
+                "Gemini Stream Error:",
+                error.message
+            );
+
+            return res.status(503).json({
+                success: false,
+                message:
+                    "AI service is temporarily unavailable. Please try again."
+
+            });
+
+        }
+
+
 
         console.log("Stream Started");
 

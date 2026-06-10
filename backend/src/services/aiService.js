@@ -17,25 +17,18 @@ const model = genAI.getGenerativeModel({
 
 const generateAIResponseStream = async (message) => {
 
-    let stream;
-
     try {
-    
-        stream = await generateAIResponseStream(message);
-    
+
+        const result = await model.generateContentStream(message);
+
+        return result.stream;
+
     } catch (error) {
-    
-        console.log(
-            "Gemini Stream Error:",
-            error.message
-        );
-    
-        return res.status(503).json({
-            success: false,
-            message:
-                "AI service is temporarily unavailable. Please try again."
-        });
-    
+
+        console.log("Gemini Error:", error.message);
+
+        return error;
+
     }
 
 };
