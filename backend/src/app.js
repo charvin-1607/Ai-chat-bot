@@ -56,6 +56,7 @@ app.use(cors({
     origin: [
        
         "http://localhost:5173",  // frontend URL
+        "https://ai-chat-bot-ten-blue.vercel.app/" // deployed frontend URL
     ],
     credentials: true
   }));
@@ -74,12 +75,12 @@ app.use("/api/message", messageRoutes);
 
 
 //test route
-app.get("/api/test", (req, res) => {
-    res.json({
-        success: true,
-        message: "API is working"
-    });
-});
+// app.get("/api/test", (req, res) => {
+//     res.json({
+//         success: true,
+//         message: "API is working"
+//     });
+// });
 
 
 module.exports = app;
