@@ -50,7 +50,7 @@ const messageSlice = createSlice({
             state.messages =
                 action.payload.messages;
 
-            //console.log("inside getMessagesRequestSuccess", state.messages);
+            console.log("inside getMessagesRequestSuccess", state.messages);
 
 
         },
@@ -158,7 +158,7 @@ const messageSlice = createSlice({
 
                 lastMessage.content += action.payload;
 
-                // console.log("inside update streaming",action.payload);
+                 console.log("inside update streaming",action.payload);
 
             }
 

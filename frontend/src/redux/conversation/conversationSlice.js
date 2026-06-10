@@ -206,7 +206,7 @@ const conversationSlice = createSlice({
       state.selectedConversation =
         action.payload;
 
-        // console.log("iniside conversation slice Selected Conversation:", state.selectedConversation);
+         console.log("iniside conversation slice Selected Conversation:", state.selectedConversation);
 
     },
 

@@ -27,7 +27,7 @@ const generateAIResponseStream = async (message) => {
 
         console.log("Gemini Error:", error.message);
 
-        return "Something went wrong";
+        return error;
 
     }
 

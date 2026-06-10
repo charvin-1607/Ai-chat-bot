@@ -1,0 +1,235 @@
+frontend .env 
+
+VITE_AUTH_ROUTE=http://localhost:5000/api/auth
+VITE_CONVERSATION_ROUTE=http://localhost:5000/api/conversation
+VITE_MESSAGE_ROUTE=http://localhost:5000/api/message
+
+have jaya te function use thay te jagaiya : 
+
+import { CONVERSATION_ROUTE } from "../config/api";
+
+export const getConversationsAPI = async () => {
+
+  try {
+
+    const response = await fetch(
+      `${CONVERSATION_ROUTE}/`,
+      {
+        method: "GET",
+        credentials: "include"
+      }
+    );
+
+    const data = await response.json();
+
+    return data;
+
+  } catch (error) {
+
+    return {
+      error: true,
+      message: error.message
+    };
+
+  }
+
+};
+
+
+api.js= 
+export const AUTH_ROUTE =
+  import.meta.env.VITE_AUTH_ROUTE;
+
+export const CONVERSATION_ROUTE =
+  import.meta.env.VITE_CONVERSATION_ROUTE;
+
+export const MESSAGE_ROUTE =
+  import.meta.env.VITE_MESSAGE_ROUTE;
+
+
+
+
+
+
+
+
+
+
+
+
+
+aiServices.js file :- 
+
+  require("dotenv").config();
+
+const { GoogleGenerativeAI } = require("@google/generative-ai");
+
+console.log(process.env.GEMINI_API_KEY);
+
+
+const genAI = new GoogleGenerativeAI(
+    process.env.GEMINI_API_KEY
+);
+
+
+const model = genAI.getGenerativeModel({
+  model: "gemini-2.5-flash"
+});
+
+
+const generateAIResponseStream = async (message) => {
+
+    try {
+
+        const result = await model.generateContentStream(message);
+
+        return result.stream;
+
+    } catch (error) {
+
+        console.log("Gemini Error:", error.message);
+
+        return "Something went wrong";
+
+    }
+
+};
+
+
+module.exports = generateAIResponseStream;
+
+
+message contoller in send message code :-
+
+// SEND MESSAGE
+const sendMessage = async (req, res) => {
+    try {
+
+        const { conversationId, message } = req.body;
+
+        if (!message) {
+            return res.status(400).json({
+                success: false,
+                message: "Message is required"
+            });
+        }
+
+        const conversation = await Conversation.findById(
+            conversationId
+        );
+
+        if (!conversation) {
+            return res.status(404).json({
+                success: false,
+                message: "Conversation not found"
+            });
+        }
+
+        if (
+            conversation.user.toString() !==
+            req.user.id.toString()
+        ) {
+            return res.status(401).json({
+                success: false,
+                message: "Unauthorized"
+            });
+        }
+
+
+        // Save User Message
+        await Message.create({
+            conversation: conversationId,
+            role: "user",
+            content: message
+        });
+
+
+        // Streaming Headers
+        res.setHeader(
+            "Content-Type",
+            "text/plain; charset=utf-8"
+        );
+
+        res.setHeader(
+            "Transfer-Encoding",
+            "chunked"
+        );
+
+        // AI Response
+        // const aiResponse = await generateAIResponse(message);
+
+        let isAborted = false;
+
+        res.on("close", () => {
+
+            console.log("Client Disconnected");
+
+            isAborted = true;
+
+        });
+
+        let fullResponse = "";
+
+
+        // Gemini Stream
+        const stream = await generateAIResponseStream(message);
+
+
+        console.log("Stream Started");
+
+        for await (
+            const chunk of stream
+        ) {
+
+            if (isAborted) {
+
+                console.log("Generation Stopped");
+
+                break;
+
+            }
+
+            const text = chunk.text();
+            console.log("Chunk Received:", text);
+
+            fullResponse += text;
+
+            res.write(text);
+
+        }
+
+        console.log("Stream Ended");
+
+        // Save AI Message
+        const aiMessage = await Message.create({
+            conversation: conversationId,
+            role: "assistant",
+            content: fullResponse
+        });
+
+
+        // Update Conversation Time
+        conversation.updatedAt = Date.now();
+
+        await conversation.save();
+
+
+        // End Stream
+        res.end();
+
+
+        // res.status(200).json({
+        //     success: true,
+        //     userMessage: message,
+        //     aiMessage
+        // });
+
+    } catch (error) {
+
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+
+    }
+};
