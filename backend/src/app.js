@@ -56,7 +56,7 @@ app.use(cors({
     origin: [
        
         "http://localhost:5173",  // frontend URL
-        "https://ai-chat-bot-ten-blue.vercel.app/" // deployed frontend URL
+        "https://ai-chat-bot-ten-blue.vercel.app" // deployed frontend URL
     ],
     credentials: true
   }));

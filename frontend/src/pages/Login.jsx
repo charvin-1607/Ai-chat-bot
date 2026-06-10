@@ -74,7 +74,7 @@ function Login() {
 
       dispatch(
         loginRequestFail(error.message));
-        alert("error message inside catch block = " + error.message);
+        alert("error message  = " + error.message);
 
     }
 
