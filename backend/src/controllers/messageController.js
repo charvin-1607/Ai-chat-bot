@@ -84,16 +84,11 @@ const sendMessage = async (req, res) => {
 
         } catch (error) {
 
-            console.log(
-                "Gemini Stream Error:",
-                error.message
-            );
+            console.log("Gemini Stream Error:",error.message);
 
             return res.status(503).json({
                 success: false,
-                message:
-                    "AI service is temporarily unavailable. Please try again."
-
+                message:"AI service is temporarily unavailable. Please try again."
             });
 
         }
