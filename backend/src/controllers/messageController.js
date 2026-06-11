@@ -60,7 +60,18 @@ const sendMessage = async (req, res) => {
             "chunked"
         );
 
-      
+        res.setHeader(
+            "Cache-Control",
+            "no-cache"
+        );
+        
+        res.setHeader(
+            "Connection",
+            "keep-alive"
+        );
+        
+        // Immediately send headers
+        res.flushHeaders();
 
         let fullResponse = "";
 
