@@ -60,15 +60,7 @@ const sendMessage = async (req, res) => {
             "chunked"
         );
 
-        let isAborted = false;
-
-        res.on("close", () => {
-
-            console.log("Client Disconnected");
-
-            isAborted = true;
-
-        });
+      
 
         let fullResponse = "";
 
@@ -94,6 +86,15 @@ const sendMessage = async (req, res) => {
         }
 
 
+        let isAborted = false;
+
+        res.on("close", () => {
+
+            console.log("Client Disconnected");
+
+            isAborted = true;
+
+        });
 
         console.log("Stream Started");
 
