@@ -102,8 +102,7 @@ function MessageInput() {
                 dispatch(finishStreamingMessage());
                 return;
             }
-            
-
+        
             dispatch(sendMessageRequestFail(error.message));
 
         }
