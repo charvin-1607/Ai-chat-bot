@@ -90,7 +90,6 @@ export const sendMessageAPI=async(
   {
   
   method:"POST",
-  
   headers:{
   "Content-Type":
   "application/json"
@@ -100,16 +99,14 @@ export const sendMessageAPI=async(
 
   signal,
   
-  body:JSON.stringify({
-  
-  conversationId,
-  message
-  
-  })
+  body:JSON.stringify({conversationId,message})
   
   }
   
   );
+
+  console.log("Response Status =", response.status);
+console.log("Response Body =", response.body);
   
   const reader=
   response.body.getReader();
@@ -131,6 +128,13 @@ export const sendMessageAPI=async(
   value
   );
   
+
+
+  console.log(
+    "FRONTEND CHUNK =>",
+    chunk
+  );
+
   onChunk(chunk);
   
   }
