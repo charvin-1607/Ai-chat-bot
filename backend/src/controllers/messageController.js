@@ -49,30 +49,6 @@ const sendMessage = async (req, res) => {
             content: message
         });
 
-        // Streaming Headers
-        res.setHeader(
-            "Content-Type",
-            "text/plain; charset=utf-8"
-        );
-
-        res.setHeader(
-            "Transfer-Encoding",
-            "chunked"
-        );
-
-        res.setHeader(
-            "Cache-Control",
-            "no-cache"
-        );
-        
-        res.setHeader(
-            "Connection",
-            "keep-alive"
-        );
-        
-        // Immediately send headers
-        res.flushHeaders();
-
         let fullResponse = "";
 
         // const stream =
@@ -96,15 +72,50 @@ const sendMessage = async (req, res) => {
 
         }
 
+              // Streaming Headers
+              res.setHeader(
+                "Content-Type",
+                "text/plain; charset=utf-8"
+            );
+    
+            res.setHeader(
+                "Transfer-Encoding",
+                "chunked"
+            );
+    
+            res.setHeader(
+                "Cache-Control",
+                "no-cache"
+            );
+            
+            res.setHeader(
+                "Connection",
+                "keep-alive"
+            );
+            
+            // Immediately send headers
+            res.flushHeaders();
+    
+      
 
         let isAborted = false;
 
-        res.on("close", () => {
+        req.on("aborted", () => {
 
-            console.log("Client Disconnected");
-
+            console.log(
+                "Request Aborted By Client"
+            );
+        
             isAborted = true;
-
+        });
+        
+        res.on("close", () => {
+        
+            console.log(
+                "Client Disconnected"
+            );
+        
+            isAborted = true;
         });
 
         console.log("Stream Started");
