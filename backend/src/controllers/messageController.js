@@ -83,18 +83,18 @@ const sendMessage = async (req, res) => {
                 "chunked"
             );
     
-            // res.setHeader(
-            //     "Cache-Control",
-            //     "no-cache"
-            // );
+            res.setHeader(
+                "Cache-Control",
+                "no-cache"
+            );
             
-            // res.setHeader(
-            //     "Connection",
-            //     "keep-alive"
-            // );
+            res.setHeader(
+                "Connection",
+                "keep-alive"
+            );
             
-            // // Immediately send headers
-            // res.flushHeaders();
+            // Immediately send headers
+            res.flushHeaders();
     
       
 
