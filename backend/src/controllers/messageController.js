@@ -100,7 +100,7 @@ const sendMessage = async (req, res) => {
 
         let isAborted = false;
 
-        req.on("aborted", () => {
+        res.on("aborted", () => {
 
             console.log(
                 "Request Aborted By Client"
