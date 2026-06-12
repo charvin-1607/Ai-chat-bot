@@ -39,10 +39,10 @@ import { getMessagesAPI }
   from "../services/messageFunction";
 
 
-  import {logoutAPI} from "../services/authFunction";
-  import { logoutRequestStart, logoutRequestSuccess } from "../redux/auth/authSlice";
+import { logoutAPI } from "../services/authFunction";
+import { logoutRequestStart, logoutRequestSuccess } from "../redux/auth/authSlice";
 
-  import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 
 function Sidebar() {
@@ -83,10 +83,10 @@ function Sidebar() {
         return;
       }
 
-      if(res.status == 429 && res.message === "Too many requests") {
+      if (res.status == 429 && res.message === "Too many requests") {
         alert("Rate limit exceeded. Please try again later.");
         return;
-    }
+      }
 
 
 
@@ -420,10 +420,34 @@ function Sidebar() {
       </div>
 
 
-      <div>
-        <button className="btn btn-danger" onClick={handleLogout}>
-          Logout
-        </button>
+      <div className="w-72 bg-zinc-900 h-screen flex flex-col">
+
+        {/* New Chat Button */}
+
+        {/* Conversation List */}
+
+        <div className="mt-auto p-4 border-t border-zinc-800">
+
+          <button
+            onClick={handleLogout}
+            className="
+        w-full
+        bg-red-600
+        hover:bg-red-700
+        text-white
+        font-medium
+        py-2.5
+        rounded-lg
+        transition-all
+        duration-200
+        cursor-pointer
+      "
+          >
+            Logout
+          </button>
+
+        </div>
+
       </div>
 
     </div>
