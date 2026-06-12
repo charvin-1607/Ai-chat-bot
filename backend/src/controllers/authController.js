@@ -70,7 +70,8 @@ exports.login = async (req, res) => {
       secure: true,
       sameSite: "none",
       // sameSite: "strict",
-      maxAge: 3600000
+      maxAge: 3600000,
+      path: "/",
     });
 
    
@@ -88,13 +89,7 @@ exports.login = async (req, res) => {
     });
 
 
-    // const time = new Date().toLocaleString();
-
-    // sendEmail(
-    //   user.email,
-    //   "Login Alert",
-    //   `Hello ${user.name},you are login on our website ,login detected at ${time}`
-    // );
+  
 
   } catch (error) {
     res.status(500).json({ success: false, message: "Server error" });
@@ -110,18 +105,13 @@ exports.logout = async (req, res) => {
     const time = new Date().toLocaleString();
 
 
-    // 🔔 Send email (no await = fast response)
-    // sendEmail(
-    //   user.email,
-    //   "Logout Alert",
-    //   `Hello ${user.name}, you have successfully logged out.logout detected at ${time}`
-    // );
 
     // 🍪 clear cookie
     res.clearCookie("token", {
       httpOnly: true,
-      secure: false, // production ma true
-      sameSite: "lax", // production ma strict
+      secure: true, // production ma true
+      sameSite: "none", // production ma strict
+      path: "/",
     });
 
     res.json({

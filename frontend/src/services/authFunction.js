@@ -84,3 +84,36 @@ export const getMeAPI = async () => {
 
 };
  
+
+
+// logout api
+export const logoutAPI = async () => {
+
+  try {
+
+      const response = await fetch(
+
+          `${AUTH_ROUTE}/logout`,
+
+          {
+              method: "POST",
+              credentials: "include"
+          }
+
+      );
+
+      return await response.json();
+
+  }
+
+  catch (error) {
+
+      return {
+          error: true,
+          message: error.message
+
+      };
+
+  }
+
+};

@@ -38,6 +38,13 @@ import {
 import { getMessagesAPI }
   from "../services/messageFunction";
 
+
+  import {logoutAPI} from "../services/authFunction";
+  import { logoutRequestStart, logoutRequestSuccess } from "../redux/auth/authSlice";
+
+  import { useNavigate } from "react-router-dom";
+
+
 function Sidebar() {
 
   const dispatch = useDispatch();
@@ -49,6 +56,7 @@ function Sidebar() {
   const { selectedConversation } = useSelector((state) => state.conversation);
 
 
+  const navigate = useNavigate();
 
 
 
@@ -248,6 +256,37 @@ function Sidebar() {
 
   };
 
+
+  // logout handler 
+  const handleLogout = async () => {
+    if (!window.confirm("Are you sure you want to logout")) return;
+    dispatch(logoutRequestStart());
+
+    try {
+
+      const res = await logoutAPI();
+
+      if (!res || res.error) {
+
+        dispatch(logoutRequestFail(res.message));
+        alert("Logout failed: " + res.message);
+        return;
+
+      }
+
+      dispatch(logoutRequestSuccess());
+      alert("Logged out successfully!");
+      navigate("/login");
+
+    } catch (error) {
+
+      dispatch(logoutRequestFail(error.message));
+      alert("Logout failed: " + error.message);
+
+    }
+
+  };
+
   return (
 
     <div className="w-300px bg-zinc-900 border-r border-zinc-800 flex flex-col">
@@ -378,6 +417,13 @@ function Sidebar() {
           ))
         }
 
+      </div>
+
+
+      <div>
+        <button className="btn btn-danger" onClick={handleLogout}>
+          Logout
+        </button>
       </div>
 
     </div>

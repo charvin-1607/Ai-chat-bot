@@ -9,6 +9,7 @@ const authSlice = createSlice({
     user: null,
 
     authChecked: false,
+    authToken: "",
 
     signupRequest: {
       loading: false,
@@ -22,6 +23,14 @@ const authSlice = createSlice({
       success: false,
       error: null,
       message: ""
+    },
+
+    logoutRequest: {
+      loading: false,
+      success: false,
+      error: null,
+      message: "",
+
     },
 
     fetchMeRequest: {
@@ -91,6 +100,8 @@ const authSlice = createSlice({
 
       state.authChecked = true;
 
+      state.authToken = action.payload?.token;
+
     },
 
 
@@ -136,6 +147,36 @@ const authSlice = createSlice({
 
     },
 
+
+
+    // logout 
+
+
+    logoutRequestStart: (state) => {
+      state.logoutRequest.loading = true;
+      state.logoutRequest.success = false;
+      state.logoutRequest.error = null;
+      state.logoutRequest.message = "";
+    },
+
+    logoutRequestSuccess: (state, action) => {
+      state.logoutRequest.loading = false;
+      state.logoutRequest.success = true;
+      state.logoutRequest.message = action.payload?.message || "Login successful";
+      state.user = null;
+      state.authToken = "";
+      state.authChecked = false;
+    },
+
+    logutRequestFail: (state, action) => {
+      state.logoutRequest.loading = false;
+      state.logoutRequest.error = action.payload || "Login failed";
+      console.log("in userslice = ", state.loginRequest.error);
+    },
+
+
+
+
   }
 
 });
@@ -153,7 +194,11 @@ export const {
 
   fetchMeRequestStart,
   fetchMeRequestSuccess,
-  fetchMeRequestFail
+  fetchMeRequestFail,
+
+  logoutRequestStart,
+  logoutRequestSuccess,
+  logutRequestFail
 
 } = authSlice.actions;
 

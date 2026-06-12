@@ -28,7 +28,7 @@ router.post("/login",
 router.get("/me", authMiddleware, authController.getMe);
 
 // logout route protected by authMiddleware
-//router.post("/logout", authMiddleware, authController.logout);
+router.post("/logout", authMiddleware, authController.logout);
 
 
 
