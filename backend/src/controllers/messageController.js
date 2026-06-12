@@ -120,6 +120,8 @@ const sendMessage = async (req, res) => {
 
         console.log("Stream Started");
 
+        res.write("stream started"); // Start the stream with an empty chunk
+
         try {
 
             for await (const chunk of stream) {
