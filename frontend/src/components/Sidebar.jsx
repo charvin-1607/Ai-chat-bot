@@ -55,6 +55,8 @@ function Sidebar() {
 
   const { selectedConversation } = useSelector((state) => state.conversation);
 
+  const [searchTerm, setSearchTerm] = useState("");
+
 
   const navigate = useNavigate();
 
@@ -287,6 +289,18 @@ function Sidebar() {
 
   };
 
+  const filteredConversations = conversations.filter(
+
+    (conversation) =>
+
+      conversation.title
+        .toLowerCase()
+        .includes(
+          searchTerm.toLowerCase()
+        )
+
+  );
+
   return (
 
     <div className="w-300px bg-zinc-900 border-r border-zinc-800 flex flex-col">
@@ -309,10 +323,33 @@ function Sidebar() {
       </div>
 
 
+      {/* // Search Bar */}
+
+
+      <div className="p-3 border-b border-zinc-800">
+
+        <input
+          type="text"
+          placeholder="Search conversations..."
+          value={searchTerm}
+          onChange={(e) =>
+            setSearchTerm(
+              e.target.value
+            )
+          }
+          className="w-full bg-zinc-800 text-white px-3 py-2 rounded-lgoutline-none border border-zinc-700 focus:border-zinc-500"
+        />
+
+      </div>
+
+
+
+
+      {/* 
       <div className="flex-1 overflow-y-auto p-3 space-y-2">
 
         {
-          conversations.map((conversation) => (
+          filteredConversations.map((conversation) => (
 
             <div
               key={conversation._id}
@@ -417,20 +454,138 @@ function Sidebar() {
           ))
         }
 
+      </div> */}
+
+      <div className="flex-1 overflow-y-auto p-3 space-y-2">
+
+        {
+          filteredConversations.length > 0 ? (
+
+            filteredConversations.map((conversation) => (
+
+              <div
+                key={conversation._id}
+                onClick={() =>
+                  handleSelectConversation(
+                    conversation
+                  )
+                }
+                className={`group relative p-3 rounded-lg text-white cursor-pointer flex items-center justify-between
+
+        ${selectedConversation?._id ===
+                    conversation._id
+                    ? "bg-zinc-700"
+                    : "bg-zinc-800 hover:bg-zinc-700"
+                  }
+        `}
+              >
+
+                <p className="truncate">
+                  {conversation.title}
+                </p>
+
+                <div className="relative">
+
+                  <button
+                    onClick={(e) => {
+
+                      e.stopPropagation();
+
+                      setOpenMenuId(
+
+                        openMenuId ===
+                          conversation._id
+
+                          ? null
+
+                          : conversation._id
+
+                      );
+
+                    }}
+                    className="hidden group-hover:block px-2"
+                  >
+
+                    ⋮
+
+                  </button>
+
+                  {
+                    openMenuId ===
+                    conversation._id && (
+
+                      <div className="absolute right-0 mt-2 w-32 bg-zinc-900 border border-zinc-700 rounded-lg overflow-hidden z-50">
+
+                        <button
+                          onClick={(e) => {
+
+                            e.stopPropagation();
+
+                            handleRenameConversation(
+                              conversation._id
+                            );
+
+                          }}
+                          className="w-full text-left px-4 py-2 hover:bg-zinc-800"
+                        >
+
+                          Rename
+
+                        </button>
+
+                        <button
+                          onClick={(e) => {
+
+                            e.stopPropagation();
+
+                            handleDeleteConversation(
+                              conversation._id
+                            );
+
+                          }}
+                          className="w-full text-left px-4 py-2 hover:bg-zinc-800 text-red-500"
+                        >
+
+                          Delete
+
+                        </button>
+
+                      </div>
+
+                    )
+                  }
+
+                </div>
+
+              </div>
+
+            ))
+
+          ) : (
+
+            <div className="text-center text-zinc-500 mt-4">
+
+              No conversations found
+
+            </div>
+
+          )
+        }
+
       </div>
 
 
-      <div className="w-72 bg-zinc-900 h-screen flex flex-col">
 
-        {/* New Chat Button */}
 
-        {/* Conversation List */}
+      {/* New Chat Button */}
 
-        <div className="mt-auto p-4 border-t border-zinc-800">
+      {/* Conversation List */}
 
-          <button
-            onClick={handleLogout}
-            className="
+      <div className="mt-auto p-4 border-t border-zinc-800">
+
+        <button
+          onClick={handleLogout}
+          className="
         w-full
         bg-red-600
         hover:bg-red-700
@@ -442,13 +597,13 @@ function Sidebar() {
         duration-200
         cursor-pointer
       "
-          >
-            Logout
-          </button>
-
-        </div>
+        >
+          Logout
+        </button>
 
       </div>
+
+
 
     </div>
 
