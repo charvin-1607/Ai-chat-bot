@@ -138,6 +138,11 @@ const sendMessage = async (req, res) => {
                 const text = chunk.text();
 
                 console.log(
+                    "Writing chunk size:",
+                    text.length
+                );
+
+                console.log(
                     "Chunk Received:",
                     text
                 );
