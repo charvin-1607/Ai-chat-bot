@@ -50,7 +50,7 @@ const messageSlice = createSlice({
             state.messages =
                 action.payload.messages;
 
-            console.log("inside getMessagesRequestSuccess", state.messages);
+          //  console.log("inside getMessagesRequestSuccess", state.messages);
 
 
         },

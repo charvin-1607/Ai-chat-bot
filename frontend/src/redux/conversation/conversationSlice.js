@@ -91,7 +91,7 @@ const conversationSlice = createSlice({
       state.getConversationsRequest.success = true;
       state.conversations = action.payload.conversations;
 
-      console.log("Conversations fetched successfully:", state.conversations);
+     // console.log("Conversations fetched successfully:", state.conversations);
 
     },
 
@@ -206,7 +206,7 @@ const conversationSlice = createSlice({
       state.selectedConversation =
         action.payload;
 
-         console.log("iniside conversation slice Selected Conversation:", state.selectedConversation);
+        // console.log("iniside conversation slice Selected Conversation:", state.selectedConversation);
 
     },
 

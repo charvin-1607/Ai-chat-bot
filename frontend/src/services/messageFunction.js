@@ -129,11 +129,11 @@ console.log("Response Body =", response.body);
   );
   
 
-  console.log("Chunk Length =", chunk.length);
-  console.log(
-    "FRONTEND CHUNK =>",
-    chunk
-  );
+  // console.log("Chunk Length =", chunk.length);
+  // console.log(
+  //   "FRONTEND CHUNK =>",
+  //   chunk
+  // );
 
   onChunk(chunk);
   
