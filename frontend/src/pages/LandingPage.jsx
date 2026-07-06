@@ -22,18 +22,7 @@ const LandingPage = () => {
           Aura AI
         </h1>
 
-        <div className="hidden md:flex gap-8 text-gray-300">
-          <Link to="#" className="hover:text-white transition">
-            Features
-          </Link>
-          <Link to="#" className="hover:text-white transition">
-            About
-          </Link>
-          <Link to="#" className="hover:text-white transition">
-            Contact
-          </Link>
-        </div>
-
+     
         <button onClick={() => navigationONLogin()} className="px-5 py-2 rounded-xl bg-white text-black font-medium hover:scale-105 transition">
           Login
         </button>

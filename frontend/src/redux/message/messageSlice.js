@@ -148,11 +148,7 @@ const messageSlice = createSlice({
 
         updateStreamingMessage: (state,action) => {
 
-            const lastMessage =
-
-                state.messages[
-                    state.messages.length - 1
-                ];
+            const lastMessage = state.messages[state.messages.length - 1];
 
             if (lastMessage && lastMessage.role === "assistant"){
 
